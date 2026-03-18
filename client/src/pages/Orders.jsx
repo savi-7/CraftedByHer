@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
@@ -27,7 +28,7 @@ export default function Orders() {
       const user = auth.currentUser;
       const token = await user.getIdToken();
       
-      const response = await fetch("http://localhost:5000/api/orders", {
+      const response = await fetch(`${API_BASE}/api/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -110,7 +111,7 @@ export default function Orders() {
       const user = auth.currentUser;
       const token = await user.getIdToken();
       
-      const response = await fetch(`http://localhost:5000/api/orders/${orderId}/cancel`, {
+      const response = await fetch(`${API_BASE}/api/orders/${orderId}/cancel`, {
         method: "PUT",
         headers: { 
           Authorization: `Bearer ${token}`,
@@ -239,7 +240,7 @@ export default function Orders() {
                     }}>
                       {(item.image || (item.productId && item.productId.image)) ? (
                         <img
-                          src={`http://localhost:5000/uploads/${item.image || (item.productId && item.productId.image)}`}
+                          src={`${API_BASE}/uploads/${item.image || (item.productId && item.productId.image)}`}
                           alt={item.title || (item.productId && item.productId.title) || "Product"}
                           style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         />

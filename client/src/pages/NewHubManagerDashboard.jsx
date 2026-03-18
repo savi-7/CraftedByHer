@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "../styles/HubManagerDashboard.css";
@@ -29,7 +30,6 @@ import {
 
 export default function NewHubManagerDashboard() {
   const navigate = useNavigate();
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
   const [manager, setManager] = useState(null);
   const [stats, setStats] = useState({
     totalHubs: 0,
@@ -302,7 +302,7 @@ export default function NewHubManagerDashboard() {
     setVerifyingOtp(true);
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000"}/api/delivery-otp/orders/${encodeURIComponent(
+        `${API_BASE}/api/delivery-otp/orders/${encodeURIComponent(
           otpOrderNumber.trim()
         )}/verify-otp`,
         {
@@ -1040,7 +1040,7 @@ export default function NewHubManagerDashboard() {
                                   <div key={idx} className="flex items-center gap-3 text-sm">
                                     {item.productId?.image && (
                                       <img 
-                                        src={`${import.meta.env.VITE_API_BASE_URL}/uploads/${item.productId.image}`} 
+                                        src={`${API_BASE}/uploads/${item.productId.image}`} 
                                         alt={item.productId.title}
                                         className="w-10 h-10 rounded object-cover"
                                       />

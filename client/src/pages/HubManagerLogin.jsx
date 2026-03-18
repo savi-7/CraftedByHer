@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -30,7 +31,7 @@ export default function HubManagerLogin() {
     setLoading(true);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      const apiUrl = API_BASE;
       const res = await fetch(`${apiUrl}/api/hub-managers/login`, {
         method: "POST",
         headers: {

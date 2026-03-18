@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate, useLocation } from "react-router-dom";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
@@ -84,7 +85,7 @@ export default function PaymentSelection() {
         const token = await user.getIdToken();
         console.log('🔄 [PaymentSelection] Syncing user to MongoDB...');
         try {
-          const syncResp = await fetch("http://localhost:5000/api/auth/sync", {
+          const syncResp = await fetch(`${API_BASE}/api/auth/sync`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -103,7 +104,7 @@ export default function PaymentSelection() {
 
         // Now fetch addresses
         console.log('📍 [PaymentSelection] Fetching addresses from API...');
-        const response = await fetch("http://localhost:5000/api/addresses", {
+        const response = await fetch(`${API_BASE}/api/addresses`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -324,7 +325,7 @@ export default function PaymentSelection() {
 
       // Sync user to MongoDB first (ensure user exists in database)
       try {
-        await fetch("http://localhost:5000/api/auth/sync", {
+        await fetch(`${API_BASE}/api/auth/sync`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -358,7 +359,7 @@ export default function PaymentSelection() {
           };
           console.log("💾 [Save] Address data to save:", addressData);
           
-          const saveResp = await fetch("http://localhost:5000/api/addresses", {
+          const saveResp = await fetch(`${API_BASE}/api/addresses`, {
             method: "POST",
             headers: { 
               "Content-Type": "application/json", 
@@ -418,8 +419,8 @@ export default function PaymentSelection() {
       console.log("Creating order:", createPayload);
 
       const createUrl = isCakePreorder && cakePreorderDetails
-        ? "http://localhost:5000/api/orders/create-cake-preorder"
-        : "http://localhost:5000/api/orders/create";
+        ? `${API_BASE}/api/orders/create-cake-preorder`
+        : `${API_BASE}/api/orders/create`;
       const response = await fetch(createUrl, {
         method: "POST",
         headers: {
@@ -958,7 +959,7 @@ export default function PaymentSelection() {
                 <div style={{ width: "80px", height: "80px", background: "#f5f5f5", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                   {item.image || (item.productId && item.productId.image) ? (
                     <img
-                      src={`http://localhost:5000/uploads/${item.image || (item.productId && item.productId.image)}`}
+                      src={`${API_BASE}/uploads/${item.image || (item.productId && item.productId.image)}`}
                       alt={item.title || (item.productId && item.productId.title) || "Product"}
                       style={{ width: "100%", height: "100%", objectFit: "cover" }}
                       onError={(e) => {

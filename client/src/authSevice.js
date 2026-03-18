@@ -1,15 +1,12 @@
 // src/authService.js
 import { auth } from './firebase';
+import { API_BASE } from "./config/api";
 import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword
-} from 'firebase/auth';
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
-// Login with Google
+} from 'firebase/auth';// Login with Google
 export async function loginWithGoogle() {
   const provider = new GoogleAuthProvider();
   const { user } = await signInWithPopup(auth, provider);

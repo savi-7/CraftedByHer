@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000';
+import { API_BASE } from "../config/api";
 
 /**
  * Get product recommendations based on similarity
@@ -7,7 +7,7 @@ const API_BASE_URL = 'http://localhost:5000';
  */
 export const getRecommendations = async (productId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/recommend/${productId}`, {
+    const response = await fetch(`${API_BASE}/api/recommend/${productId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export const getRecommendations = async (productId) => {
  */
 export const getAllProducts = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/recommend/`, {
+    const response = await fetch(`${API_BASE}/api/recommend/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

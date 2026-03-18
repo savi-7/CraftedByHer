@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -87,7 +88,7 @@ export default function DeliveryLogin() {
       console.log("=== DELIVERY LOGIN FORM SUBMIT ===");
       console.log("Form data:", form);
       
-      const res = await fetch("http://localhost:5000/api/delivery/login", {
+      const res = await fetch(`${API_BASE}/api/delivery/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

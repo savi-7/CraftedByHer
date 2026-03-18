@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { API_BASE } from "../config/api";
 
 export default function HubManagerRegistration() {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ export default function HubManagerRegistration() {
 
   const fetchHubs = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hubs`);
+      const res = await fetch(`${API_BASE}/api/hubs`);
       const data = await res.json();
       if (data.success) {
         // Filter hubs without managers
@@ -87,7 +88,7 @@ export default function HubManagerRegistration() {
 
     try {
       // For now, this is a self-registration endpoint (you may want admin approval)
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hub-managers/register`, {
+      const res = await fetch(`${API_BASE}/api/hub-managers/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

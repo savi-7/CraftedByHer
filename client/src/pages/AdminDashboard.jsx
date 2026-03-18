@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { API_BASE } from "../config/api";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,9 +8,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useConfirm } from "../context/ConfirmContext";
 import SalesPredictionDashboard from "../components/SalesPredictionDashboard";
 import SellerApplications from "../components/SellerApplications";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
 // Helper function to check product expiry status
 function getProductStatus(product) {
   // Check if product is active
@@ -679,7 +677,7 @@ export default function UpdatedAdminDashboard() {
       const user = auth.currentUser;
       const token = await user.getIdToken(true);
       
-      const res = await fetch(`http://localhost:5000/api/admin/products/toggle-status/${id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/products/toggle-status/${id}`, {
         method: "PATCH",
         headers: { 
           "Content-Type": "application/json",
@@ -720,7 +718,7 @@ export default function UpdatedAdminDashboard() {
       const user = auth.currentUser;
       const token = await user.getIdToken(true);
       
-      const res = await fetch(`http://localhost:5000/api/admin/products/approve/${id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/products/approve/${id}`, {
         method: "PATCH",
         headers: { 
           "Content-Type": "application/json",
@@ -761,7 +759,7 @@ export default function UpdatedAdminDashboard() {
       const user = auth.currentUser;
       const token = await user.getIdToken(true);
       
-      const res = await fetch(`http://localhost:5000/api/admin/products/reject/${id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/products/reject/${id}`, {
         method: "PATCH",
         headers: { 
           "Content-Type": "application/json",
@@ -794,7 +792,7 @@ export default function UpdatedAdminDashboard() {
     
     // Set current image URL for display
     if (p.image) {
-      setCurrentImageUrl(`http://localhost:5000/uploads/${p.image}`);
+      setCurrentImageUrl(`${API_BASE}/uploads/${p.image}`);
     } else if (p.img) {
       setCurrentImageUrl(`/images/products/${p.img}`);
     } else {
@@ -1127,7 +1125,7 @@ export default function UpdatedAdminDashboard() {
                           <div style={{ position: "relative", paddingTop: "100%", background: "#f5f5f5" }}>
                             {p.image ? (
                               <img
-                                src={`http://localhost:5000/uploads/${p.image}`}
+                                src={`${API_BASE}/uploads/${p.image}`}
                                 alt={p.title}
                                 style={{ 
                                   position: "absolute", 
@@ -1411,7 +1409,7 @@ export default function UpdatedAdminDashboard() {
                         }}>
                           {selectedOrder.image ? (
                             <img
-                              src={`http://localhost:5000/uploads/${selectedOrder.image}`}
+                              src={`${API_BASE}/uploads/${selectedOrder.image}`}
                               alt={selectedOrder.title}
                               style={{ 
                                 position: "absolute", 
@@ -3229,7 +3227,7 @@ export default function UpdatedAdminDashboard() {
                             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                               {item.image && (
                                 <img 
-                                  src={`http://localhost:5000/uploads/${item.image}`}
+                                  src={`${API_BASE}/uploads/${item.image}`}
                                   alt={item.title}
                                   style={{ 
                                     width: "40px", 
@@ -3956,7 +3954,7 @@ export default function UpdatedAdminDashboard() {
                     <div style={{ flexShrink: 0 }}>
                       {item.image ? (
                         <img
-                          src={item.image.startsWith('http') ? item.image : `http://localhost:5000/uploads/${item.image}`}
+                          src={item.image.startsWith('http') ? item.image : `${API_BASE}/uploads/${item.image}`}
                           alt={item.title}
                           style={{
                             width: "80px",
@@ -4139,7 +4137,7 @@ export default function UpdatedAdminDashboard() {
                     <div>
                       <p style={{ fontSize: "14px", color: "#666" }}>{selectedApplication.documents.find(doc => doc.type === 'id_proof').fileName}</p>
                       <a 
-                        href={`http://localhost:5000${selectedApplication.documents.find(doc => doc.type === 'id_proof').filePath}`}
+                        href={`${API_BASE}${selectedApplication.documents.find(doc => doc.type === 'id_proof').filePath}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ ...buttonPrimary, padding: "8px 16px", fontSize: "14px", textDecoration: "none", display: "inline-block" }}
@@ -4157,7 +4155,7 @@ export default function UpdatedAdminDashboard() {
                     <div>
                       <p style={{ fontSize: "14px", color: "#666" }}>{selectedApplication.documents.find(doc => doc.type === 'business_license').fileName}</p>
                       <a 
-                        href={`http://localhost:5000${selectedApplication.documents.find(doc => doc.type === 'business_license').filePath}`}
+                        href={`${API_BASE}${selectedApplication.documents.find(doc => doc.type === 'business_license').filePath}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ ...buttonPrimary, padding: "8px 16px", fontSize: "14px", textDecoration: "none", display: "inline-block" }}
@@ -4175,7 +4173,7 @@ export default function UpdatedAdminDashboard() {
                     <div>
                       <p style={{ fontSize: "14px", color: "#666" }}>{selectedApplication.documents.find(doc => doc.type === 'bank_proof').fileName}</p>
                       <a 
-                        href={`http://localhost:5000${selectedApplication.documents.find(doc => doc.type === 'bank_proof').filePath}`}
+                        href={`${API_BASE}${selectedApplication.documents.find(doc => doc.type === 'bank_proof').filePath}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ ...buttonPrimary, padding: "8px 16px", fontSize: "14px", textDecoration: "none", display: "inline-block" }}

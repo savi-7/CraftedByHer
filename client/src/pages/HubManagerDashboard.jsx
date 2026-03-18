@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { 
@@ -21,7 +22,6 @@ import {
 
 export default function HubManagerDashboard() {
   const navigate = useNavigate();
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
   const [manager, setManager] = useState(null);
   const [stats, setStats] = useState({
     pending: 0,

@@ -1,5 +1,6 @@
   // src/pages/Login.jsx
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,9 +16,6 @@ import {
   browserLocalPersistence,
   signOut,
 } from "firebase/auth";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -129,7 +127,6 @@ export default function Login() {
       const idToken = await user.getIdToken();
 
       // Debug: Test connection before sync
-      const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
       console.log("API Base URL:", API_BASE);
       
       // Test connection

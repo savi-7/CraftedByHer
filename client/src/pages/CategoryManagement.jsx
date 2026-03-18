@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../config/api";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,7 +16,7 @@ export default function CategoryManagement() {
   // Fetch categories
   const fetchCategories = async (user) => {
     const token = await user.getIdToken();
-    const res = await fetch("http://localhost:5000/api/admin/categories", {
+    const res = await fetch(`${API_BASE}/api/admin/categories`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
@@ -37,8 +38,8 @@ export default function CategoryManagement() {
     const user = auth.currentUser;
     const token = await user.getIdToken();
     const url = editingId
-      ? `http://localhost:5000/api/admin/categories/${editingId}`
-      : "http://localhost:5000/api/admin/categories";
+      ? `${API_BASE}/api/admin/categories/${editingId}`
+      : `${API_BASE}/api/admin/categories`;
     const method = editingId ? "PUT" : "POST";
 
     const res = await fetch(url, {
@@ -73,7 +74,7 @@ export default function CategoryManagement() {
     
     const user = auth.currentUser;
     const token = await user.getIdToken();
-    const res = await fetch(`http://localhost:5000/api/admin/categories/${id}`, {
+    const res = await fetch(`${API_BASE}/api/admin/categories/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });

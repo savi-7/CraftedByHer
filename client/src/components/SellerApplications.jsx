@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
 const SellerApplications = ({ onViewApplicationDetails }) => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);

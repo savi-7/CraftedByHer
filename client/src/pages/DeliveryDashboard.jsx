@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useConfirm } from "../context/ConfirmContext";
@@ -120,7 +121,7 @@ export default function DeliveryDashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/delivery-orders/stats/dashboard", {
+      const res = await fetch(`${API_BASE}/api/delivery-orders/stats/dashboard`, {
         headers: getAuthHeaders()
       });
 
@@ -141,7 +142,7 @@ export default function DeliveryDashboard() {
       console.log("Auth headers:", getAuthHeaders());
       console.log("Agent ID:", agent?.agentId);
       
-      const res = await fetch(`http://localhost:5000/api/delivery-orders`, {
+      const res = await fetch(`${API_BASE}/api/delivery-orders`, {
         headers: getAuthHeaders()
       });
 
@@ -172,7 +173,7 @@ export default function DeliveryDashboard() {
 
   const updateOnlineStatus = async (status) => {
     try {
-      const res = await fetch("http://localhost:5000/api/delivery/status/online", {
+      const res = await fetch(`${API_BASE}/api/delivery/status/online`, {
         method: "PATCH",
         headers: getAuthHeaders(),
         body: JSON.stringify({ isOnline: status })
@@ -198,7 +199,7 @@ export default function DeliveryDashboard() {
 
   const updateReadyForDeliveryStatus = async (status) => {
     try {
-      const res = await fetch("http://localhost:5000/api/delivery/status/ready", {
+      const res = await fetch(`${API_BASE}/api/delivery/status/ready`, {
         method: "PATCH",
         headers: getAuthHeaders(),
         body: JSON.stringify({ readyForDelivery: status })
@@ -231,7 +232,7 @@ export default function DeliveryDashboard() {
     
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/delivery/location", {
+      const res = await fetch(`${API_BASE}/api/delivery/location`, {
         method: "PATCH",
         headers: getAuthHeaders(),
         body: JSON.stringify(defaultCoords)
@@ -274,7 +275,7 @@ export default function DeliveryDashboard() {
     
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/delivery/location", {
+      const res = await fetch(`${API_BASE}/api/delivery/location`, {
         method: "PATCH",
         headers: getAuthHeaders(),
         body: JSON.stringify(coords)
@@ -317,7 +318,7 @@ export default function DeliveryDashboard() {
           longitude: pos.coords.longitude
         };
         try {
-          const res = await fetch("http://localhost:5000/api/delivery/location", {
+          const res = await fetch(`${API_BASE}/api/delivery/location`, {
             method: "PATCH",
             headers: getAuthHeaders(),
             body: JSON.stringify(coords)
@@ -371,7 +372,7 @@ export default function DeliveryDashboard() {
       console.log("Order ID:", orderId);
       console.log("Status:", status);
       
-      const res = await fetch(`http://localhost:5000/api/delivery-orders/${orderId}/status`, {
+      const res = await fetch(`${API_BASE}/api/delivery-orders/${orderId}/status`, {
         method: "PATCH",
         headers: getAuthHeaders(),
         body: JSON.stringify({ status, notes })
@@ -406,7 +407,7 @@ export default function DeliveryDashboard() {
       console.log("Order ID:", orderId);
       console.log("Action:", action);
       
-      const res = await fetch(`http://localhost:5000/api/delivery-orders/${orderId}/accept`, {
+      const res = await fetch(`${API_BASE}/api/delivery-orders/${orderId}/accept`, {
         method: "PATCH",
         headers: getAuthHeaders(),
         body: JSON.stringify({ action })
@@ -463,7 +464,7 @@ export default function DeliveryDashboard() {
           longitude: pos.coords.longitude
         };
         try {
-          const res = await fetch("http://localhost:5000/api/delivery-orders/location", {
+          const res = await fetch(`${API_BASE}/api/delivery-orders/location`, {
             method: "PATCH",
             headers: getAuthHeaders(),
             body: JSON.stringify(coords)

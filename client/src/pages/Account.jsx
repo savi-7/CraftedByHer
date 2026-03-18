@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import {
   FiGrid,
@@ -130,7 +131,7 @@ export default function Account() {
     try {
       // First, sync user to MongoDB
       const token = await auth.currentUser.getIdToken();
-      await fetch("http://localhost:5000/api/auth/sync", {
+      await fetch(`${API_BASE}/api/auth/sync`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -159,16 +160,16 @@ export default function Account() {
 
       // Fetch user profile, cart, wishlist, and orders in parallel
       const [profileResponse, cartResponse, wishlistResponse, ordersResponse] = await Promise.all([
-        fetch("http://localhost:5000/api/auth/me", {
+        fetch(`${API_BASE}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch("http://localhost:5000/api/cart", {
+        fetch(`${API_BASE}/api/cart`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch("http://localhost:5000/api/wishlist", {
+        fetch(`${API_BASE}/api/wishlist`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch("http://localhost:5000/api/orders", {
+        fetch(`${API_BASE}/api/orders`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -505,7 +506,7 @@ function OrdersSection({ orders, onRefresh }) {
                         }}>
                           {image ? (
                             <img
-                              src={`http://localhost:5000/uploads/${image}`}
+                              src={`${API_BASE}/uploads/${image}`}
                               alt={title}
                               style={{ width: "100%", height: "100%", objectFit: "cover" }}
                             />
@@ -534,7 +535,7 @@ function OrdersSection({ orders, onRefresh }) {
                     onClick={async () => {
                       try {
                         const token = await auth.currentUser.getIdToken();
-                        const resp = await fetch(`http://localhost:5000/api/orders/${order._id}/cancel`, {
+                        const resp = await fetch(`${API_BASE}/api/orders/${order._id}/cancel`, {
                           method: "PUT",
                           headers: { 
                             Authorization: `Bearer ${token}`,
@@ -582,7 +583,7 @@ function OrdersSection({ orders, onRefresh }) {
                       
                       try {
                         const token = await auth.currentUser.getIdToken();
-                        const resp = await fetch(`http://localhost:5000/api/orders/${order._id}`, {
+                        const resp = await fetch(`${API_BASE}/api/orders/${order._id}`, {
                           method: "DELETE",
                           headers: { Authorization: `Bearer ${token}` },
                         });
@@ -616,7 +617,7 @@ function CartSection({ cart, onRefresh }) {
   const removeFromCart = async (itemId) => {
     try {
       const token = await auth.currentUser.getIdToken();
-      const response = await fetch(`http://localhost:5000/api/cart/remove/${itemId}`, {
+      const response = await fetch(`${API_BASE}/api/cart/remove/${itemId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -685,7 +686,7 @@ function CartSection({ cart, onRefresh }) {
               <div style={{ width: "100px", height: "100px", background: "#fff", border: "1px solid #eee", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                 {item.image ? (
                   <img
-                    src={`http://localhost:5000/uploads/${item.image}`}
+                    src={`${API_BASE}/uploads/${item.image}`}
                     alt={item.title || "Product"}
                     style={{ width: "100%", height: "100%", objectFit: "contain", padding: "6px" }}
                     onError={(e) => {
@@ -738,7 +739,7 @@ function CartSection({ cart, onRefresh }) {
                   onClick={async () => {
                     const token = await auth.currentUser.getIdToken();
                     for (const id of item.baseIds) {
-                      await fetch(`http://localhost:5000/api/cart/remove/${id}`, {
+                      await fetch(`${API_BASE}/api/cart/remove/${id}`, {
                         method: "DELETE",
                         headers: { Authorization: `Bearer ${token}` },
                       });
@@ -795,7 +796,7 @@ function WishlistSection({ wishlist, onRefresh }) {
       }
       
       const token = await auth.currentUser.getIdToken();
-      const response = await fetch("http://localhost:5000/api/cart/add", {
+      const response = await fetch(`${API_BASE}/api/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -824,7 +825,7 @@ function WishlistSection({ wishlist, onRefresh }) {
   const removeFromWishlist = async (productId) => {
     try {
       const token = await auth.currentUser.getIdToken();
-      const response = await fetch(`http://localhost:5000/api/wishlist/remove/${productId}`, {
+      const response = await fetch(`${API_BASE}/api/wishlist/remove/${productId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -876,7 +877,7 @@ function WishlistSection({ wishlist, onRefresh }) {
               <div style={{ width: "100%", height: "120px", background: "#f5f5f5", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "12px" }}>
                 {product.image ? (
                   <img
-                    src={`http://localhost:5000/uploads/${product.image}`}
+                    src={`${API_BASE}/uploads/${product.image}`}
                     alt={product.title}
                     style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }}
                   />
@@ -946,7 +947,7 @@ function Addresses({ refreshKey }) {
         console.log('🔄 [Account-Addresses] Syncing user...');
         const token = await auth.currentUser.getIdToken();
         try {
-          const syncResp = await fetch("http://localhost:5000/api/auth/sync", {
+          const syncResp = await fetch(`${API_BASE}/api/auth/sync`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -965,7 +966,7 @@ function Addresses({ refreshKey }) {
 
         // Fetch addresses
         console.log('📍 [Account-Addresses] Fetching addresses...');
-        const resp = await fetch("http://localhost:5000/api/addresses", {
+        const resp = await fetch(`${API_BASE}/api/addresses`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log('📍 [Account-Addresses] API response status:', resp.status);
@@ -993,7 +994,7 @@ function Addresses({ refreshKey }) {
   const refresh = async () => {
     try {
       const token = await auth.currentUser.getIdToken();
-      const resp = await fetch("http://localhost:5000/api/addresses", {
+      const resp = await fetch(`${API_BASE}/api/addresses`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (resp.ok) {
@@ -1021,7 +1022,7 @@ function Addresses({ refreshKey }) {
     try {
       setSaving(true);
       const token = await auth.currentUser.getIdToken();
-      const resp = await fetch("http://localhost:5000/api/addresses", {
+      const resp = await fetch(`${API_BASE}/api/addresses`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(form),
@@ -1045,7 +1046,7 @@ function Addresses({ refreshKey }) {
   const setDefault = async (id) => {
     try {
       const token = await auth.currentUser.getIdToken();
-      const resp = await fetch(`http://localhost:5000/api/addresses/${id}/default`, {
+      const resp = await fetch(`${API_BASE}/api/addresses/${id}/default`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -1061,7 +1062,7 @@ function Addresses({ refreshKey }) {
   const removeAddress = async (id) => {
     try {
       const token = await auth.currentUser.getIdToken();
-      const resp = await fetch(`http://localhost:5000/api/addresses/${id}`, {
+      const resp = await fetch(`${API_BASE}/api/addresses/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

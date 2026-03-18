@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../config/api";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,9 +9,6 @@ import { useConfirm } from "../context/ConfirmContext";
 import EnhancedSellerDashboard from "../components/EnhancedSellerDashboard";
 import NotificationBell from "../components/NotificationBell";
 import { MAIN_CATEGORIES } from "../data/categories";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
 export default function SellerDashboard() {
   const navigate = useNavigate();
   const location = useLocation();

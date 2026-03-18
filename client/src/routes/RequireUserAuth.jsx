@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../config/api";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { auth } from "../firebase";
@@ -18,7 +19,7 @@ export default function RequireUserAuth({ children }) {
 
       try {
         const token = await user.getIdToken();
-        const response = await fetch('http://localhost:5000/api/auth/me', {
+        const response = await fetch(`${API_BASE}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -108,7 +109,7 @@ export default function RequireUserAuth({ children }) {
       // For sellers, check if they have submitted an application
       try {
         const token = await user.getIdToken(true);
-        const response = await fetch('http://localhost:5000/api/seller/applications/my-application', {
+        const response = await fetch(`${API_BASE}/api/seller/applications/my-application`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         

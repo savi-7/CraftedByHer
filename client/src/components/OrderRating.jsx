@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE } from "../config/api";
 import { auth } from '../firebase';
 import { toast } from 'react-toastify';
 
@@ -28,7 +29,7 @@ const OrderRating = ({ orderId, onRatingSubmitted }) => {
       const token = await auth.currentUser.getIdToken();
       console.log('Got token:', token ? 'Yes' : 'No');
       
-      const response = await fetch(`http://localhost:5000/api/orders/${orderId}/rate`, {
+      const response = await fetch(`${API_BASE}/api/orders/${orderId}/rate`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

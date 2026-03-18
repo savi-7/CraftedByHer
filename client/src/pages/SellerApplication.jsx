@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
@@ -38,7 +39,7 @@ export default function SellerApplication() {
         // Check if user already has an application
         try {
           const token = await currentUser.getIdToken(true);
-          const response = await fetch("http://localhost:5000/api/seller/applications/my-application", {
+          const response = await fetch(`${API_BASE}/api/seller/applications/my-application`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           
@@ -198,7 +199,7 @@ export default function SellerApplication() {
         formDataObj.append('bankProof', documents.bankProof);
       }
       
-      const response = await fetch("http://localhost:5000/api/seller/applications/apply", {
+      const response = await fetch(`${API_BASE}/api/seller/applications/apply`, {
         method: "POST",
         headers: { 
           Authorization: `Bearer ${token}`

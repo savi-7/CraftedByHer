@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../config/api";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
 import { MAIN_CATEGORIES } from "../data/categories";
@@ -19,7 +20,7 @@ export default function ProductManagement() {
   // ✅ Fetch products
   const fetchProducts = async (user) => {
     const token = await user.getIdToken();
-    const res = await fetch("http://localhost:5000/api/admin/products", {
+    const res = await fetch(`${API_BASE}/api/admin/products`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
@@ -61,8 +62,8 @@ export default function ProductManagement() {
       setLoading(true);
       const token = await auth.currentUser.getIdToken();
       const url = editingId
-        ? `http://localhost:5000/api/admin/products/${editingId}`
-        : "http://localhost:5000/api/admin/products";
+        ? `${API_BASE}/api/admin/products/${editingId}`
+        : `${API_BASE}/api/admin/products`;
       const method = editingId ? "PUT" : "POST";
 
       const fd = new FormData();
@@ -272,7 +273,7 @@ export default function ProductManagement() {
           <div key={p._id} className="border rounded p-3 bg-white">
             {p.image && (
               <img 
-                src={`http://localhost:5000/uploads/${p.image}`} 
+                src={`${API_BASE}/uploads/${p.image}`} 
                 alt={p.title} 
                 className="w-full h-40 object-cover rounded mb-2" 
               />

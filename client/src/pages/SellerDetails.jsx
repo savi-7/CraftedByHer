@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../config/api";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { auth } from "../firebase";
-import { toast } from "react-toastify";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
-// Helper function to check product expiry status
+import { toast } from "react-toastify";// Helper function to check product expiry status
 function getProductStatus(product) {
   // Check if product is active
   if (product.isActive === false) {

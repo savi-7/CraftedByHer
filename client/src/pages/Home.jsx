@@ -1,5 +1,6 @@
 // src/pages/Home.jsx
 import { useEffect, useState } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 
 const CATEGORIES = [
@@ -23,7 +24,7 @@ export default function Home() {
 
   // ✅ Fetch products from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/items")
+    fetch(`${API_BASE}/api/items`)
       .then((res) => res.json())
       .then((data) => {
         const list = Array.isArray(data) ? data : (data?.products || []);
@@ -336,7 +337,7 @@ export default function Home() {
               <div key={p._id} className="cbh-card">
                 {p.image ? (
                   <img
-                    src={`http://localhost:5000/uploads/${p.image}`}
+                    src={`${API_BASE}/uploads/${p.image}`}
                     alt={p.title}
                     style={{
                       width: "100%",

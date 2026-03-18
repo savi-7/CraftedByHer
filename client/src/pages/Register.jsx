@@ -1,5 +1,6 @@
 // src/pages/Register.jsx
 import React, { useState } from "react";
+import { API_BASE } from "../config/api";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -45,8 +46,6 @@ export default function Register() {
   });
   
   const navigate = useNavigate();
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
   const onName  = (v) => { setName(v);   setErrors((e) => ({ ...e, name: validateName(v) })); };
   const onPhone = (v) => { setPhone(v);  setErrors((e) => ({ ...e, phone: validatePhone(v) })); };
   const onEmail = (v) => { setEmail(v);  setErrors((e) => ({ ...e, email: validateEmail(v) })); };

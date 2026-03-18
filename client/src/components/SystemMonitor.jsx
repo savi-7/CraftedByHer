@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE } from "../config/api";
 import { auth } from '../firebase';
 
 const SystemMonitor = () => {
   const [systemHealth, setSystemHealth] = useState(null);
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [lastUpdated, setLastUpdated] = useState(null);
-
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
-  useEffect(() => {
+  const [lastUpdated, setLastUpdated] = useState(null);  useEffect(() => {
     fetchSystemHealth();
     fetchSystemAlerts();
     

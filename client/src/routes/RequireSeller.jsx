@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../config/api";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -28,7 +29,7 @@ export default function RequireSeller({ children }) {
         const controller = new AbortController();
         const fetchTimeout = setTimeout(() => controller.abort(), 1500);
 
-        const response = await fetch('http://localhost:5000/api/auth/me', {
+        const response = await fetch(`${API_BASE}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
           signal: controller.signal
         });

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { 
@@ -84,13 +85,13 @@ export default function CraftedByHerHubDashboard() {
 
       // Fetch all data in parallel
       const [hubsRes, notificationsRes, ordersRes, statsRes] = await Promise.all([
-        fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hubs/all-with-stats`).catch(() => ({ ok: false })),
+        fetch(`${API_BASE}/api/hubs/all-with-stats`).catch(() => ({ ok: false })),
         
-        fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hub-notifications?managerId=${managerId}&unreadOnly=true`).catch(() => ({ ok: false })),
+        fetch(`${API_BASE}/api/hub-notifications?managerId=${managerId}&unreadOnly=true`).catch(() => ({ ok: false })),
         
-        fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hub-notifications/orders-by-district`).catch(() => ({ ok: false })),
+        fetch(`${API_BASE}/api/hub-notifications/orders-by-district`).catch(() => ({ ok: false })),
         
-        fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hub-notifications/dashboard-stats`).catch(() => ({ ok: false }))
+        fetch(`${API_BASE}/api/hub-notifications/dashboard-stats`).catch(() => ({ ok: false }))
       ]);
 
       // Process responses
@@ -181,7 +182,7 @@ export default function CraftedByHerHubDashboard() {
   const fetchSellerHubOrders = async () => {
     setLoadingOrders(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hub-notifications/seller-hub-orders`);
+      const res = await fetch(`${API_BASE}/api/hub-notifications/seller-hub-orders`);
       if (res.ok) {
         const data = await res.json();
         if (data.success) {
@@ -199,7 +200,7 @@ export default function CraftedByHerHubDashboard() {
   const fetchCustomerHubOrders = async () => {
     setLoadingOrders(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hub-notifications/customer-hub-orders`);
+      const res = await fetch(`${API_BASE}/api/hub-notifications/customer-hub-orders`);
       if (res.ok) {
         const data = await res.json();
         if (data.success) {
@@ -217,7 +218,7 @@ export default function CraftedByHerHubDashboard() {
   const fetchApprovedOrders = async () => {
     setLoadingOrders(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hub-notifications/approved-orders`);
+      const res = await fetch(`${API_BASE}/api/hub-notifications/approved-orders`);
       if (res.ok) {
         const data = await res.json();
         if (data.success) {
@@ -246,7 +247,7 @@ export default function CraftedByHerHubDashboard() {
     const token = localStorage.getItem("hubManagerToken");
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/hub-notifications/${notificationId}/read`,
+        `${API_BASE}/api/hub-notifications/${notificationId}/read`,
         {
           method: "PATCH",
           headers: { Authorization: `Bearer ${token}` }
@@ -259,7 +260,7 @@ export default function CraftedByHerHubDashboard() {
         setUnreadCount(prev => Math.max(0, prev - 1));
         
         // Refresh orders data to show the new order in the hub
-        const ordersRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hub-notifications/orders-by-district`);
+        const ordersRes = await fetch(`${API_BASE}/api/hub-notifications/orders-by-district`);
         if (ordersRes.ok) {
           const ordersData = await ordersRes.json();
           if (ordersData.success) {
@@ -1448,7 +1449,7 @@ export default function CraftedByHerHubDashboard() {
                         setGeneratingOTP(true);
                         try {
                           const response = await fetch(
-                            `${import.meta.env.VITE_API_BASE_URL}/api/delivery-otp/generate-otp`,
+                            `${API_BASE}/api/delivery-otp/generate-otp`,
                             {
                               method: "POST",
                               headers: { "Content-Type": "application/json" },
@@ -1606,7 +1607,7 @@ export default function CraftedByHerHubDashboard() {
                         setVerifying(true);
                         try {
                           const response = await fetch(
-                            `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000"}/api/delivery-otp/orders/${selectedOrderId}/verify-otp`,
+                            `${API_BASE}/api/delivery-otp/orders/${selectedOrderId}/verify-otp`,
                             {
                               method: "POST",
                               headers: { "Content-Type": "application/json" },

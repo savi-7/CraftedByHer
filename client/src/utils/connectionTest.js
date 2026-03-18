@@ -1,9 +1,6 @@
+import { API_BASE } from "../config/api";
 // src/utils/connectionTest.js
-// Utility to test connection to backend server
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
-export async function testServerConnection() {
+// Utility to test connection to backend serverexport async function testServerConnection() {
   try {
     // Test basic connectivity
     const controller = new AbortController();

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate, useLocation } from "react-router-dom";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
@@ -98,7 +99,7 @@ export default function Checkout() {
     try {
       const user = auth.currentUser;
       const token = await user.getIdToken();
-      const response = await fetch("http://localhost:5000/api/cart", {
+      const response = await fetch(`${API_BASE}/api/cart`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -116,7 +117,7 @@ export default function Checkout() {
   const loadSavedAddresses = async () => {
     try {
       const token = await auth.currentUser.getIdToken();
-      const resp = await fetch("http://localhost:5000/api/addresses", {
+      const resp = await fetch(`${API_BASE}/api/addresses`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (resp.ok) {
@@ -155,7 +156,7 @@ export default function Checkout() {
     setDeliveryMessage("Checking hub availability...");
 
     try {
-      const response = await fetch("http://localhost:5000/api/hubs/check-pincode", {
+      const response = await fetch(`${API_BASE}/api/hubs/check-pincode`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -377,7 +378,7 @@ export default function Checkout() {
             isDefault: setAsDefault,
           };
           
-          const saveResp = await fetch("http://localhost:5000/api/addresses", {
+          const saveResp = await fetch(`${API_BASE}/api/addresses`, {
             method: "POST",
             headers: { 
               "Content-Type": "application/json", 
@@ -392,7 +393,7 @@ export default function Checkout() {
             toast.success("Address saved!");
             
             // Reload saved addresses to include the new one
-            const updatedAddresses = await fetch("http://localhost:5000/api/addresses", {
+            const updatedAddresses = await fetch(`${API_BASE}/api/addresses`, {
               headers: { Authorization: `Bearer ${token}` },
             });
             
@@ -1134,11 +1135,11 @@ export default function Checkout() {
                 // Build the full URL
                 if (rawImagePath) {
                   if (rawImagePath.startsWith('/uploads/')) {
-                    imageUrl = `http://localhost:5000${rawImagePath}`;
+                    imageUrl = `${API_BASE}${rawImagePath}`;
                   } else if (rawImagePath.startsWith('http')) {
                     imageUrl = rawImagePath;
                   } else {
-                    imageUrl = `http://localhost:5000/uploads/${rawImagePath}`;
+                    imageUrl = `${API_BASE}/uploads/${rawImagePath}`;
                   }
                 }
                 

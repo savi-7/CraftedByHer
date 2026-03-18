@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate, useLocation } from "react-router-dom";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
@@ -55,7 +56,7 @@ export default function Payment() {
       const token = await user.getIdToken();
 
       // Create Razorpay order
-      const response = await fetch("http://localhost:5000/api/payment/create-razorpay-order", {
+      const response = await fetch(`${API_BASE}/api/payment/create-razorpay-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +104,7 @@ export default function Payment() {
         handler: async function (response) {
           try {
             // Verify payment
-            const verifyResponse = await fetch("http://localhost:5000/api/payment/verify-payment", {
+            const verifyResponse = await fetch(`${API_BASE}/api/payment/verify-payment`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

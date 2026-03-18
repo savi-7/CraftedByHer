@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
 const EXTRA_TOPPING_OPTIONS = ["Dry fruits", "Choco chips", "Fresh fruits", "Buttercream flowers", "Edible glitter", "None"];
 
 export default function CakePreorderCustomize() {

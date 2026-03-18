@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
 import SellerApplications from "../components/SellerApplications";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
 export default function AdminApplications() {
   const navigate = useNavigate();
   const [selectedApplication, setSelectedApplication] = useState(null);

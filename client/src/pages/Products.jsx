@@ -1,5 +1,6 @@
 // src/pages/Products.jsx
 import { useEffect, useMemo, useRef, useState } from "react";
+import { API_BASE } from "../config/api";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { MAIN_CATEGORIES, ALL_SUBCATEGORIES } from "../data/categories";
 
@@ -19,7 +20,7 @@ export default function Products() {
 
   // ✅ Fetch products from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/items")
+    fetch(`${API_BASE}/api/items`)
       .then((res) => res.json())
       .then((data) => {
         console.log("Products API response:", data);
@@ -350,7 +351,7 @@ export default function Products() {
                 <div style={{ position: "relative", overflow: "hidden" }}>
                   {p.image || p.img ? (
                     <img
-                      src={`http://localhost:5000/uploads/${p.image || p.img}`}
+                      src={`${API_BASE}/uploads/${p.image || p.img}`}
                       alt={p.title}
                       style={{
                         width: "100%",

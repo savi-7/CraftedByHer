@@ -1,5 +1,6 @@
 // src/components/ProductCard.jsx
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../config/api";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
 
@@ -8,9 +9,9 @@ export default function ProductCard({ p }) {
   
   // Handle both old (img) and new (image) field formats
   const imageUrl = p.image
-    ? `http://localhost:5000/uploads/${p.image}` // ✅ new uploads from admin
+    ? `${API_BASE}/uploads/${p.image}` // ✅ new uploads from admin
     : p.img
-    ? `http://localhost:5000/uploads/${p.img}`     // ✅ old uploads
+    ? `${API_BASE}/uploads/${p.img}`     // ✅ old uploads
     : "/images/placeholder.jpg";                 // fallback
 
   const handleCardClick = () => {
@@ -40,7 +41,7 @@ export default function ProductCard({ p }) {
       const user = auth.currentUser;
       const token = await user.getIdToken();
 
-      const response = await fetch("http://localhost:5000/api/cart/add", {
+      const response = await fetch(`${API_BASE}/api/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

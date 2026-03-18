@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -25,7 +26,6 @@ export default function OrderPlanner() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
       console.log("Fetching products from:", `${API_BASE}/api/items`);
       
       const response = await fetch(`${API_BASE}/api/items`);
@@ -654,7 +654,7 @@ export default function OrderPlanner() {
                       >
                         {product.images && product.images.length > 0 ? (
                           <img
-                            src={product.images[0].startsWith('http') ? product.images[0] : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/uploads/${product.images[0]}`}
+                            src={product.images[0].startsWith('http') ? product.images[0] : `${API_BASE}/uploads/${product.images[0]}`}
                             alt={product.title}
                             style={{
                               width: "100%",
@@ -669,7 +669,7 @@ export default function OrderPlanner() {
                           />
                         ) : product.image ? (
                           <img
-                            src={product.image.startsWith('http') ? product.image : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/uploads/${product.image}`}
+                            src={product.image.startsWith('http') ? product.image : `${API_BASE}/uploads/${product.image}`}
                             alt={product.title}
                             style={{
                               width: "100%",

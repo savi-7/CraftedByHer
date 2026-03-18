@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiTrash2, FiShoppingCart } from "react-icons/fi";
 import { auth } from "../firebase";
@@ -25,7 +26,7 @@ export default function Wishlist() {
       if (!user) return;
 
       const token = await user.getIdToken();
-      const response = await fetch("http://localhost:5000/api/wishlist", {
+      const response = await fetch(`${API_BASE}/api/wishlist`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -49,7 +50,7 @@ export default function Wishlist() {
       const user = auth.currentUser;
       const token = await user.getIdToken();
 
-      const response = await fetch(`http://localhost:5000/api/wishlist/remove/${productId}`, {
+      const response = await fetch(`${API_BASE}/api/wishlist/remove/${productId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -87,7 +88,7 @@ export default function Wishlist() {
       const user = auth.currentUser;
       const token = await user.getIdToken();
 
-      const response = await fetch("http://localhost:5000/api/cart/add", {
+      const response = await fetch(`${API_BASE}/api/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -168,9 +169,9 @@ export default function Wishlist() {
             })
             .map((product) => {
             const imageUrl = product.image
-              ? `http://localhost:5000/uploads/${product.image}`
+              ? `${API_BASE}/uploads/${product.image}`
               : product.img
-              ? `http://localhost:5000/uploads/${product.img}`
+              ? `${API_BASE}/uploads/${product.img}`
               : "/images/placeholder.png";
 
             return (

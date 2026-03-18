@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
-export default function ContentFeed() {
+import "react-toastify/dist/ReactToastify.css";export default function ContentFeed() {
   const navigate = useNavigate();
   const [content, setContent] = useState([]);
   const [loading, setLoading] = useState(true);

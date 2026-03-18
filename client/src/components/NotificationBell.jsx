@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { API_BASE } from "../config/api";
 import { FiBell } from "react-icons/fi";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
@@ -29,7 +30,7 @@ export default function NotificationBell({ userRole }) {
     try {
       setLoading(true);
       const token = await auth.currentUser.getIdToken();
-      const response = await fetch("http://localhost:5000/api/notifications", {
+      const response = await fetch(`${API_BASE}/api/notifications`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -58,7 +59,7 @@ export default function NotificationBell({ userRole }) {
   const markAsRead = async (notificationId) => {
     try {
       const token = await auth.currentUser.getIdToken();
-      await fetch(`http://localhost:5000/api/notifications/${notificationId}/read`, {
+      await fetch(`${API_BASE}/api/notifications/${notificationId}/read`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -273,7 +274,7 @@ export default function NotificationBell({ userRole }) {
                 onClick={async () => {
                   try {
                     const token = await auth.currentUser.getIdToken();
-                    await fetch("http://localhost:5000/api/notifications/mark-all-read", {
+                    await fetch(`${API_BASE}/api/notifications/mark-all-read`, {
                       method: "PATCH",
                       headers: { Authorization: `Bearer ${token}` }
                     });

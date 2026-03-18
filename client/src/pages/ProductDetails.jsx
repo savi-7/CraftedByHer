@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
@@ -47,7 +48,7 @@ export default function ProductDetails() {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/items/${id}`);
+      const response = await fetch(`${API_BASE}/api/items/${id}`);
       if (!response.ok) {
         throw new Error("Product not found");
       }
@@ -85,7 +86,7 @@ export default function ProductDetails() {
       if (!user) return;
 
       const token = await user.getIdToken();
-      const response = await fetch(`http://localhost:5000/api/wishlist/check/${id}`, {
+      const response = await fetch(`${API_BASE}/api/wishlist/check/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -135,7 +136,7 @@ export default function ProductDetails() {
         quantity: quantity,
       });
 
-      const response = await fetch("http://localhost:5000/api/cart/add", {
+      const response = await fetch(`${API_BASE}/api/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -285,8 +286,8 @@ export default function ProductDetails() {
       const token = await user.getIdToken();
 
       const url = isInWishlist 
-        ? `http://localhost:5000/api/wishlist/remove/${id}`
-        : "http://localhost:5000/api/wishlist/add";
+        ? `${API_BASE}/api/wishlist/remove/${id}`
+        : `${API_BASE}/api/wishlist/add`;
       
       const method = isInWishlist ? "DELETE" : "POST";
       const body = isInWishlist ? undefined : JSON.stringify({ productId: id });
@@ -391,9 +392,9 @@ export default function ProductDetails() {
   };
 
   const imageUrl = product.image
-    ? `http://localhost:5000/uploads/${product.image}`
+    ? `${API_BASE}/uploads/${product.image}`
     : product.img
-    ? `http://localhost:5000/uploads/${product.img}`
+    ? `${API_BASE}/uploads/${product.img}`
     : "/images/placeholder.png";
 
   return (

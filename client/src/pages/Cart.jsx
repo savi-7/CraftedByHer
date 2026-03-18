@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
@@ -26,7 +27,7 @@ export default function Cart() {
       if (!user) return;
 
       const token = await user.getIdToken();
-      const response = await fetch("http://localhost:5000/api/cart", {
+      const response = await fetch(`${API_BASE}/api/cart`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -52,7 +53,7 @@ export default function Cart() {
       const user = auth.currentUser;
       const token = await user.getIdToken();
 
-      const response = await fetch("http://localhost:5000/api/cart/update", {
+      const response = await fetch(`${API_BASE}/api/cart/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -85,7 +86,7 @@ export default function Cart() {
       const user = auth.currentUser;
       const token = await user.getIdToken();
 
-      const response = await fetch(`http://localhost:5000/api/cart/remove/${itemId}`, {
+      const response = await fetch(`${API_BASE}/api/cart/remove/${itemId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -122,7 +123,7 @@ export default function Cart() {
       const user = auth.currentUser;
       const token = await user.getIdToken();
 
-      const response = await fetch("http://localhost:5000/api/cart/clear", {
+      const response = await fetch(`${API_BASE}/api/cart/clear`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -192,9 +193,9 @@ export default function Cart() {
           <div style={itemsContainerStyle}>
             {cart.items.map((item) => {
               const imageUrl = item.productId.image
-                ? `http://localhost:5000/uploads/${item.productId.image}`
+                ? `${API_BASE}/uploads/${item.productId.image}`
                 : item.productId.img
-                ? `http://localhost:5000/uploads/${item.productId.img}`
+                ? `${API_BASE}/uploads/${item.productId.img}`
                 : "/images/placeholder.png";
 
               return (

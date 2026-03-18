@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
@@ -36,7 +37,7 @@ export default function OrderConfirmation() {
             try {
               if (auth.currentUser) {
                 const token = await auth.currentUser.getIdToken();
-                await fetch(`http://localhost:5000/api/orders/${orderId}/delivered`, {
+                await fetch(`${API_BASE}/api/orders/${orderId}/delivered`, {
                   method: 'PATCH',
                   headers: { Authorization: `Bearer ${token}` }
                 });
@@ -77,7 +78,7 @@ export default function OrderConfirmation() {
     if (orderId) {
       try {
         const token = await auth.currentUser.getIdToken();
-        const resp = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
+        const resp = await fetch(`${API_BASE}/api/orders/${orderId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!resp.ok) throw new Error("Failed to fetch order");
@@ -106,7 +107,7 @@ export default function OrderConfirmation() {
       if (orderId) {
         try {
           const token = await auth.currentUser.getIdToken();
-          const resp = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
+          const resp = await fetch(`${API_BASE}/api/orders/${orderId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           if (!resp.ok) throw new Error("Failed to fetch order");
@@ -712,7 +713,7 @@ export default function OrderConfirmation() {
                 }}>
                   {productImage ? (
                     <img
-                      src={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/uploads/${productImage}`}
+                      src={`${API_BASE}/uploads/${productImage}`}
                       alt={productTitle}
                       style={{ 
                         width: "100%", 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE } from "../config/api";
 import { useNavigate } from 'react-router-dom';
 import { getRecommendations } from '../api/recommendationAPI';
 
@@ -245,7 +246,7 @@ const ProductRecommendations = ({ productId, title = "Recommended Products" }) =
             }}>
               {product.image ? (
                 <img
-                  src={`http://localhost:5000/uploads/${product.image}`}
+                  src={`${API_BASE}/uploads/${product.image}`}
                   alt={product.name}
                   style={{
                     width: '100%',

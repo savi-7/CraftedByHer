@@ -1,8 +1,6 @@
 import React, { useState } from "react";
+import { API_BASE } from "../config/api";
 import { toast } from "react-toastify";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
 const boxStyle = {
   padding: "12px",
   background: "#f3e7dc",

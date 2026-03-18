@@ -1,9 +1,7 @@
 import React, { useState } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
 export default function CentralHubManagerLogin() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({

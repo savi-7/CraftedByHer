@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../config/api";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -22,7 +23,7 @@ export default function BuyerDashboard() {
       const token = await user.getIdToken(true);
       
       // Fetch user profile
-      const profileRes = await fetch("http://localhost:5000/api/auth/me", {
+      const profileRes = await fetch(`${API_BASE}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -32,7 +33,7 @@ export default function BuyerDashboard() {
       }
       
       // Fetch orders
-      const ordersRes = await fetch("http://localhost:5000/api/orders/my-orders", {
+      const ordersRes = await fetch(`${API_BASE}/api/orders/my-orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -42,7 +43,7 @@ export default function BuyerDashboard() {
       }
       
       // Fetch wishlist
-      const wishlistRes = await fetch("http://localhost:5000/api/wishlist", {
+      const wishlistRes = await fetch(`${API_BASE}/api/wishlist`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -52,7 +53,7 @@ export default function BuyerDashboard() {
       }
       
       // Fetch recommendations
-      const recRes = await fetch("http://localhost:5000/api/recommendations", {
+      const recRes = await fetch(`${API_BASE}/api/recommendations`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -69,7 +70,7 @@ export default function BuyerDashboard() {
       }
       
       // Fetch buyer notifications
-      const notificationsRes = await fetch("http://localhost:5000/api/notifications/buyer", {
+      const notificationsRes = await fetch(`${API_BASE}/api/notifications/buyer`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -311,7 +312,7 @@ export default function BuyerDashboard() {
                         try {
                           const user = auth.currentUser;
                           const token = await user.getIdToken();
-                          await fetch(`http://localhost:5000/api/notifications/${notification._id}/read`, {
+                          await fetch(`${API_BASE}/api/notifications/${notification._id}/read`, {
                             method: "PATCH",
                             headers: { Authorization: `Bearer ${token}` }
                           });
@@ -592,7 +593,7 @@ export default function BuyerDashboard() {
                     }}>
                       {product.image ? (
                         <img
-                          src={`http://localhost:5000/uploads/${product.image}`}
+                          src={`${API_BASE}/uploads/${product.image}`}
                           alt={product.title}
                           style={{ 
                             maxHeight: "100%", 

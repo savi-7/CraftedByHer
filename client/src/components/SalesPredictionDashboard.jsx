@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE } from "../config/api";
 
 /**
  * Sales Prediction Dashboard Component
@@ -16,7 +17,7 @@ const SalesPredictionDashboard = () => {
   const [error, setError] = useState(null);
   const [selectedMonths, setSelectedMonths] = useState(3);
 
-  const API_BASE = 'http://localhost:5000/api/sales-prediction'; // Works without Python!
+  const API_BASE = `${API_BASE}/api/sales-prediction`; // Works without Python!
 
   // Load historical data on mount
   useEffect(() => {

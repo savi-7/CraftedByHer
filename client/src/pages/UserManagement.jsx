@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
@@ -49,7 +50,7 @@ export default function UserManagement() {
         const token = await firebaseUser.getIdToken();
         console.log('Checking admin role for user:', firebaseUser.email);
         
-        const response = await fetch('http://localhost:5000/api/auth/me', {
+        const response = await fetch(`${API_BASE}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -102,7 +103,7 @@ export default function UserManagement() {
         sortOrder: filters.sortOrder
       });
 
-      const url = `http://localhost:5000/api/admin/users?${queryParams}`;
+      const url = `${API_BASE}/api/admin/users?${queryParams}`;
       console.log('Fetching from URL:', url);
 
       const response = await fetch(url, {
@@ -138,7 +139,7 @@ export default function UserManagement() {
       if (!user) return;
 
       const token = await user.getIdToken();
-      const response = await fetch('http://localhost:5000/api/admin/users/stats', {
+      const response = await fetch(`${API_BASE}/api/admin/users/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -592,7 +593,7 @@ function UserDetailsModal({ user, onClose }) {
         const token = await authUser.getIdToken();
         
         // Fetch user details with enriched cart, wishlist, and orders
-        const response = await fetch(`http://localhost:5000/api/admin/users/${user._id}`, {
+        const response = await fetch(`${API_BASE}/api/admin/users/${user._id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -866,7 +867,7 @@ function UserDetailsModal({ user, onClose }) {
                           }}>
                             {item.image ? (
                               <img 
-                                src={`http://localhost:5000/uploads/${item.image}`} 
+                                src={`${API_BASE}/uploads/${item.image}`} 
                                 alt={item.title}
                                 style={{
                                   width: '100%',
@@ -945,7 +946,7 @@ function UserDetailsModal({ user, onClose }) {
                           }}>
                             {item.image ? (
                               <img 
-                                src={`http://localhost:5000/uploads/${item.image}`} 
+                                src={`${API_BASE}/uploads/${item.image}`} 
                                 alt={item.title}
                                 style={{
                                   width: '100%',
@@ -1020,7 +1021,7 @@ function UserDetailsModal({ user, onClose }) {
                           {Array.isArray(order.items) && order.items.length > 0 && (
                             <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                               {order.items.map((it, i) => {
-                                const imgSrc = it?.image ? `http://localhost:5000/uploads/${it.image}` : null;
+                                const imgSrc = it?.image ? `${API_BASE}/uploads/${it.image}` : null;
                                 const price = (it?.variant?.price ?? it?.price ?? 0);
                                 return (
                                   <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'center', background: '#fff', padding: '8px', borderRadius: '8px', border: '1px solid #ead9c9' }}>

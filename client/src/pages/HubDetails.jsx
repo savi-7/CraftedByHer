@@ -14,6 +14,7 @@ import {
   FiMail,
   FiHome
 } from "react-icons/fi";
+import { API_BASE } from "../config/api";
 
 export default function HubDetails() {
   const { hubId } = useParams();
@@ -31,7 +32,7 @@ export default function HubDetails() {
     setLoading(true);
     try {
       // Fetch hub information
-      const hubRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/public-hubs`);
+      const hubRes = await fetch(`${API_BASE}/api/public-hubs`);
       const hubData = await hubRes.json();
       
       if (hubData.success) {

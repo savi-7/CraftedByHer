@@ -1,5 +1,6 @@
 // src/components/Navbar.jsx
 import { useEffect, useState } from "react";
+import { API_BASE } from "../config/api";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiUser, FiShoppingCart, FiHeart } from "react-icons/fi";
 import { auth } from "../firebase";
@@ -62,7 +63,6 @@ export default function Navbar() {
       if (user) {
         try {
           const token = await user.getIdToken();
-          const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
           const response = await fetch(`${API_BASE}/api/auth/me`, {
             headers: { Authorization: `Bearer ${token}` }
           });

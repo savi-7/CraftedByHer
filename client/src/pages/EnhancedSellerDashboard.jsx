@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../config/api";
 import { auth } from "../firebase";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -89,7 +90,7 @@ export default function EnhancedSellerDashboard() {
     try {
       await user.reload();
       const token = await user.getIdToken(true);
-      const res = await fetch("http://localhost:5000/api/auth/me", {
+      const res = await fetch(`${API_BASE}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -107,7 +108,7 @@ export default function EnhancedSellerDashboard() {
     try {
       await user.reload();
       const token = await user.getIdToken(true);
-      const res = await fetch("http://localhost:5000/api/seller/products", {
+      const res = await fetch(`${API_BASE}/api/seller/products`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -134,7 +135,7 @@ export default function EnhancedSellerDashboard() {
     try {
       await user.reload();
       const token = await user.getIdToken(true);
-      const res = await fetch("http://localhost:5000/api/seller/orders", {
+      const res = await fetch(`${API_BASE}/api/seller/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -278,8 +279,8 @@ export default function EnhancedSellerDashboard() {
       const token = await auth.currentUser.getIdToken();
 
       const url = editingId
-        ? `http://localhost:5000/api/seller/products/${editingId}`
-        : "http://localhost:5000/api/seller/products";
+        ? `${API_BASE}/api/seller/products/${editingId}`
+        : `${API_BASE}/api/seller/products`;
 
       const method = editingId ? "PUT" : "POST";
 
@@ -349,7 +350,7 @@ export default function EnhancedSellerDashboard() {
       // Force refresh token to ensure it's valid
       const token = await auth.currentUser.getIdToken(true);
       
-      const res = await fetch(`http://localhost:5000/api/seller/products/toggle-status/${id}`, {
+      const res = await fetch(`${API_BASE}/api/seller/products/toggle-status/${id}`, {
         method: "PATCH",
         headers: { 
           "Authorization": `Bearer ${token}`,
@@ -401,7 +402,7 @@ export default function EnhancedSellerDashboard() {
     
     // Set current image URL for display
     if (p.image) {
-      setCurrentImageUrl(`http://localhost:5000/uploads/${p.image}`);
+      setCurrentImageUrl(`${API_BASE}/uploads/${p.image}`);
     } else if (p.img) {
       setCurrentImageUrl(`/images/products/${p.img}`);
     } else {
@@ -975,7 +976,7 @@ export default function EnhancedSellerDashboard() {
                       {p.image ? (
   // For new products uploaded via multer
   <img
-    src={`http://localhost:5000/uploads/${p.image}`}
+    src={`${API_BASE}/uploads/${p.image}`}
     alt={p.title}
     style={{ maxHeight: "120px", width: "100%", objectFit: "cover", borderRadius: "6px" }}
   />
@@ -1348,7 +1349,7 @@ export default function EnhancedSellerDashboard() {
                     <div style={{ flexShrink: 0 }}>
                       {item.image ? (
                         <img
-                          src={item.image.startsWith('http') ? item.image : `http://localhost:5000/uploads/${item.image}`}
+                          src={item.image.startsWith('http') ? item.image : `${API_BASE}/uploads/${item.image}`}
                           alt={item.title}
                           style={{
                             width: "80px",
