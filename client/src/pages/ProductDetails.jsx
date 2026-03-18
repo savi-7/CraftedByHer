@@ -118,6 +118,12 @@ export default function ProductDetails() {
       return;
     }
 
+    // Check if product is buyable
+    if (product.isBuyable === false) {
+      toast.error("This product is not available for purchase as it is within 10 days of expiry");
+      return;
+    }
+
     try {
       setAddingToCart(true);
       const user = auth.currentUser;
@@ -170,6 +176,10 @@ export default function ProductDetails() {
 
   const handleBuyNow = () => {
     if (!selectedVariant || product?.stock <= 0) return;
+    if (product?.isBuyable === false) {
+      toast.error("This product is not available for purchase as it is within 10 days of expiry");
+      return;
+    }
     const item = {
       productId: product?._id || id,
       title: product?.title || "",
@@ -368,6 +378,18 @@ export default function ProductDetails() {
     return descriptions[product.title] || `Handcrafted with love by our skilled women artisans using traditional methods and natural ingredients. This ${product.title.toLowerCase()} is made fresh with care, preserving authentic flavors and ensuring quality in every bite.`;
   };
 
+  const isCakeProduct = (prod) => {
+    if (!prod) return false;
+    if (prod.subCategory === "Cakes") return true;
+    if (typeof prod.category === "string" && prod.category === "Cakes") return true;
+    if (prod.category?.name === "Cakes") return true;
+    if (prod.mainCategory === "Food" && typeof prod.title === "string") {
+      const t = prod.title.toLowerCase();
+      if (t.includes("cake")) return true;
+    }
+    return false;
+  };
+
   const imageUrl = product.image
     ? `http://localhost:5000/uploads/${product.image}`
     : product.img
@@ -408,7 +430,11 @@ export default function ProductDetails() {
           
           <div className="product-category">
             <span className="product-category-label">Category:</span>
-            <span className="product-category-value">{product.category?.name || product.category || "Uncategorized"}</span>
+            <span className="product-category-value">
+              {product.mainCategory && product.subCategory 
+                ? `${product.mainCategory} > ${product.subCategory}`
+                : product.subCategory || product.category?.name || product.category || "Uncategorized"}
+            </span>
           </div>
 
           {/* Stock Status - Only show when out of stock */}
@@ -455,52 +481,140 @@ export default function ProductDetails() {
             </div>
           )}
 
+          {/* Buyable Status Warning */}
+          {product.isBuyable === false && (
+            <div style={{
+              padding: "12px",
+              backgroundColor: "#fff3cd",
+              border: "1px solid #ffc107",
+              borderRadius: "8px",
+              marginBottom: "16px",
+              color: "#856404"
+            }}>
+              <strong>⚠️ Product Not Available for Purchase</strong>
+              <p style={{ margin: "8px 0 0 0", fontSize: "14px" }}>
+                This product is within 10 days of expiry and cannot be purchased.
+                {product.expiryDate && (
+                  <span> Expires on: {new Date(product.expiryDate).toLocaleDateString()}</span>
+                )}
+              </p>
+            </div>
+          )}
+
           {/* Action Buttons */}
-          <div className="product-actions-container">
-            <button
-              onClick={itemAddedToCart ? handleGoToCart : handleAddToCart}
-              disabled={!selectedVariant || addingToCart || product.stock <= 0}
-              className={`product-button-primary ${itemAddedToCart ? 'go-to-cart' : ''} ${(addingToCart || product.stock <= 0) ? 'product-button-disabled' : ''}`}
-            >
-              {addingToCart 
-                ? "Adding..." 
-                : product.stock <= 0 
-                  ? "Out of Stock" 
-                  : itemAddedToCart 
-                    ? "🛒 Go to Cart" 
-                    : "🛒 Add to Cart"
-              }
-            </button>
+          {isCakeProduct(product) ? (
+            <div className="product-actions-container">
+              <p style={{ fontSize: "13px", color: "#666", marginBottom: "12px" }}>
+                Cakes are delivered only within your district. Check pincode and customize on the preorder page.
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate("/cakes/preorder", { state: { productId: product._id } })}
+                className="product-button-primary"
+                style={{
+                  padding: "10px 20px",
+                  fontSize: "14px",
+                  borderRadius: "10px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
+                <span>🎂 Preorder Cake</span>
+              </button>
 
-            <button
-              onClick={handleBuyNow}
-              disabled={!selectedVariant || product.stock <= 0}
-              className={`product-button-primary buy-now ${product.stock <= 0 ? 'product-button-disabled' : ''}`}
-            >
-              ⚡ Buy Now
-            </button>
+              {/* Secondary small actions */}
+              <div style={{ display: "flex", gap: "8px", marginTop: "12px", flexWrap: "wrap" }}>
+                <button
+                  onClick={handleWishlistToggle}
+                  disabled={addingToWishlist}
+                  className={`product-button-secondary ${
+                    addingToWishlist ? "product-button-disabled" : ""
+                  }`}
+                  style={{
+                    padding: "6px 10px",
+                    fontSize: "12px",
+                    borderRadius: "999px",
+                  }}
+                >
+                  {addingToWishlist
+                    ? "Updating..."
+                    : isInWishlist
+                    ? "❤️ Wishlist"
+                    : "🤍 Wishlist"}
+                </button>
 
-            <button
-              onClick={handleWishlistToggle}
-              disabled={addingToWishlist}
-              className={`product-button-secondary ${addingToWishlist ? 'product-button-disabled' : ''}`}
-            >
-              {addingToWishlist 
-                ? "Updating..." 
-                : isInWishlist 
-                  ? "❤️ Remove from Wishlist" 
-                  : "🤍 Add to Wishlist"
-              }
-            </button>
+                <button
+                  onClick={() => setShowShareMenu(!showShareMenu)}
+                  className="product-button-share"
+                  style={{
+                    padding: "6px 10px",
+                    fontSize: "12px",
+                    borderRadius: "999px",
+                  }}
+                >
+                  <FiShare2 size={14} />
+                  <span style={{ marginLeft: 4 }}>Share</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="product-actions-container">
+              <button
+                onClick={itemAddedToCart ? handleGoToCart : handleAddToCart}
+                disabled={
+                  !selectedVariant || addingToCart || product.stock <= 0 || product.isBuyable === false
+                }
+                className={`product-button-primary ${itemAddedToCart ? "go-to-cart" : ""} ${
+                  addingToCart || product.stock <= 0 || product.isBuyable === false
+                    ? "product-button-disabled"
+                    : ""
+                }`}
+              >
+                {addingToCart
+                  ? "Adding..."
+                  : product.isBuyable === false
+                  ? "Not Available"
+                  : product.stock <= 0
+                  ? "Out of Stock"
+                  : itemAddedToCart
+                  ? "🛒 Go to Cart"
+                  : "🛒 Add to Cart"}
+              </button>
 
-            <button
-              onClick={() => setShowShareMenu(!showShareMenu)}
-              className="product-button-share"
-            >
-              <FiShare2 size={16} />
-              Share
-            </button>
-          </div>
+              <button
+                onClick={handleBuyNow}
+                disabled={!selectedVariant || product.stock <= 0 || product.isBuyable === false}
+                className={`product-button-primary buy-now ${
+                  product.stock <= 0 || product.isBuyable === false ? "product-button-disabled" : ""
+                }`}
+              >
+                {product.isBuyable === false ? "Not Available" : "⚡ Buy Now"}
+              </button>
+
+              <button
+                onClick={handleWishlistToggle}
+                disabled={addingToWishlist}
+                className={`product-button-secondary ${
+                  addingToWishlist ? "product-button-disabled" : ""
+                }`}
+              >
+                {addingToWishlist
+                  ? "Updating..."
+                  : isInWishlist
+                  ? "❤️ Remove from Wishlist"
+                  : "🤍 Add to Wishlist"}
+              </button>
+
+              <button
+                onClick={() => setShowShareMenu(!showShareMenu)}
+                className="product-button-share"
+              >
+                <FiShare2 size={16} />
+                Share
+              </button>
+            </div>
+          )}
 
           {/* Share Menu */}
           {showShareMenu && (

@@ -149,6 +149,98 @@ router.post("/create", verify, async (req, res) => {
     // Clear user's cart after successful order
     await Cart.findOneAndDelete({ userId: req.user.uid });
     
+    // 📧 Send order confirmation email to buyer
+    try {
+      const { sendOrderConfirmationEmail, sendAdminOrderNotification } = require('../utils/orderEmailService');
+      await sendOrderConfirmationEmail(order, buyerDetails.email);
+      await sendAdminOrderNotification(order);
+    } catch (emailError) {
+      console.error("⚠️ Error sending emails (non-critical):", emailError.message);
+    }
+    
+    // 🔔 Create notifications
+    try {
+      const Notification = require('../models/Notification');
+      const Product = require('../models/Product');
+      
+      // Get seller IDs from products
+      const productIds = processedItems.map(item => item.productId);
+      console.log("📦 Product IDs in order:", productIds);
+      
+      const products = await Product.find({ _id: { $in: productIds } }).select('sellerId title');
+      console.log("📦 Products found:", products.map(p => ({ id: p._id, title: p.title, sellerId: p.sellerId })));
+      
+      // Filter out products without sellerId and get unique seller IDs
+      const sellerIds = [...new Set(products.map(p => p.sellerId).filter(id => id))];
+      console.log("👤 Unique seller IDs:", sellerIds);
+      
+      if (sellerIds.length === 0) {
+        console.warn("⚠️ No seller IDs found in products! Products might not have sellerId field.");
+        console.warn("⚠️ Skipping seller notifications. Please ensure products have sellerId field.");
+      } else {
+        console.log(`🔔 Creating notifications for ${sellerIds.length} sellers...`);
+        
+        // Create notification for each seller
+        for (const sellerId of sellerIds) {
+          console.log(`🔔 Creating notification for seller: ${sellerId}`);
+          try {
+            const notification = await Notification.create({
+              userId: sellerId,
+              userRole: 'seller',
+              type: 'new_order',
+              title: '🎉 New Order Received!',
+              message: `You have a new order #${order.orderNumber} from ${buyerDetails.name}. Please move the products to your nearest hub.`,
+              orderId: order._id,
+              orderNumber: order.orderNumber,
+              actionRequired: true,
+              actionType: 'move_to_hub',
+              metadata: {
+                orderAmount: order.finalAmount,
+                itemCount: order.items.length,
+                customerName: buyerDetails.name,
+                customerEmail: buyerDetails.email,
+                customerPhone: buyerDetails.phone,
+                customerAddress: buyerDetails.address
+              }
+            });
+            console.log(`✅ Notification created for seller ${sellerId}:`, notification._id);
+          } catch (notifCreateError) {
+            console.error(`❌ Failed to create notification for seller ${sellerId}:`, notifCreateError.message);
+            console.error(`❌ Error details:`, notifCreateError);
+          }
+        }
+      }
+      
+      // Create notification for admin
+      const adminUsers = await mongoose.model('User').find({ role: 'admin' }).select('uid');
+      console.log("👨‍💼 Admin users found:", adminUsers.length);
+      
+      for (const admin of adminUsers) {
+        console.log(`🔔 Creating notification for admin: ${admin.uid}`);
+        const notification = await Notification.create({
+          userId: admin.uid,
+          userRole: 'admin',
+          type: 'new_order',
+          title: '🔔 New Order Alert',
+          message: `New order #${order.orderNumber} received from ${buyerDetails.name}. Total: ₹${order.finalAmount}`,
+          orderId: order._id,
+          orderNumber: order.orderNumber,
+          actionRequired: false,
+          actionType: 'none',
+          metadata: {
+            orderAmount: order.finalAmount,
+            customerName: buyerDetails.name
+          }
+        });
+        console.log(`✅ Notification created for admin ${admin.uid}:`, notification._id);
+      }
+      
+      console.log("✅ Notifications created for sellers and admin");
+    } catch (notifError) {
+      console.error("⚠️ Error creating notifications (non-critical):", notifError);
+      console.error("Stack trace:", notifError.stack);
+    }
+    
     res.json({
       success: true,
       order: order,
@@ -161,6 +253,129 @@ router.post("/create", verify, async (req, res) => {
       stack: err.stack,
       name: err.name
     });
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ Create cake preorder (single cake, customizations, then address → payment)
+router.post("/create-cake-preorder", verify, async (req, res) => {
+  try {
+    const {
+      items,
+      buyerDetails,
+      paymentMethod,
+      notes = "",
+      cakePreorderDetails = {},
+    } = req.body;
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: "Items are required" });
+    }
+    if (!buyerDetails || !buyerDetails.name || !buyerDetails.email || !buyerDetails.phone) {
+      return res.status(400).json({ error: "Buyer details are required" });
+    }
+    if (!buyerDetails.address || !buyerDetails.address.street || !buyerDetails.address.pincode) {
+      return res.status(400).json({ error: "Delivery address is required" });
+    }
+    if (!paymentMethod || !["cod", "online"].includes(paymentMethod)) {
+      return res.status(400).json({ error: "Valid payment method is required" });
+    }
+
+    let totalAmount = 0;
+    const processedItems = [];
+
+    for (const item of items) {
+      const itemTotal = item.variant.price * item.quantity;
+      totalAmount += itemTotal;
+      let productId;
+      if (typeof item.productId === "string") {
+        productId = new mongoose.Types.ObjectId(item.productId);
+      } else if (item.productId && (item.productId._id || item.productId.id)) {
+        productId = new mongoose.Types.ObjectId(item.productId._id || item.productId.id);
+      } else {
+        return res.status(400).json({ error: "Invalid productId in items" });
+      }
+      processedItems.push({
+        productId,
+        title: item.title,
+        image: item.image,
+        variant: { weight: item.variant.weight, price: item.variant.price },
+        quantity: item.quantity || 1,
+      });
+    }
+
+    const shippingCharges = totalAmount >= 500 ? 0 : 50;
+    const finalAmount = totalAmount + shippingCharges;
+    const orderStatus = paymentMethod === "cod" ? "confirmed" : "pending";
+    const paymentStatus = "pending";
+
+    const order = new Order({
+      userId: req.user.uid,
+      items: processedItems,
+      buyerDetails,
+      paymentMethod,
+      totalAmount: Number(totalAmount),
+      shippingCharges: Number(shippingCharges),
+      finalAmount: Number(finalAmount),
+      notes,
+      paymentStatus,
+      orderStatus,
+      isCakePreorder: true,
+      cakePreorderDetails: {
+        size: cakePreorderDetails.size || "",
+        messageOnCake: cakePreorderDetails.messageOnCake || "",
+        eventType: cakePreorderDetails.eventType || "",
+        eggOrEggless: ["egg", "eggless"].includes(cakePreorderDetails.eggOrEggless)
+          ? cakePreorderDetails.eggOrEggless
+          : "eggless",
+        extraToppings: Array.isArray(cakePreorderDetails.extraToppings)
+          ? cakePreorderDetails.extraToppings
+          : [],
+        deliveryDate: cakePreorderDetails.deliveryDate
+          ? new Date(cakePreorderDetails.deliveryDate)
+          : null,
+      },
+    });
+
+    await order.save();
+
+    try {
+      const Notification = require("../models/Notification");
+      const Product = require("../models/Product");
+      const productIds = processedItems.map((i) => i.productId);
+      const products = await Product.find({ _id: { $in: productIds } }).select("sellerId");
+      const sellerIds = [...new Set(products.map((p) => p.sellerId).filter(Boolean))];
+
+      for (const sellerId of sellerIds) {
+        await Notification.create({
+          userId: sellerId,
+          userRole: "seller",
+          type: "cake_preorder",
+          title: "Pre order cake order",
+          message: `Cake preorder #${order.orderNumber} from ${buyerDetails.name}. Click Start production → Complete production → Move to hub.`,
+          orderId: order._id,
+          orderNumber: order.orderNumber,
+          actionRequired: true,
+          actionType: "start_production",
+          metadata: {
+            orderAmount: order.finalAmount,
+            customerName: buyerDetails.name,
+            isCakePreorder: true,
+            cakePreorderDetails: order.cakePreorderDetails,
+          },
+        });
+      }
+    } catch (notifErr) {
+      console.error("Cake preorder seller notification error:", notifErr);
+    }
+
+    res.json({
+      success: true,
+      order,
+      message: "Cake preorder placed successfully",
+    });
+  } catch (err) {
+    console.error("Error creating cake preorder:", err);
     res.status(500).json({ error: err.message });
   }
 });

@@ -10,8 +10,8 @@ export default function PaymentSelection() {
   const [paymentMethod, setPaymentMethod] = useState("online");
   const [loading, setLoading] = useState(false);
 
-  // Get order data from location state (now includes deliveryPincode, not buyerDetails)
-  const { cartItems, deliveryPincode, deliveryCity } = location.state || {};
+  // Get order data from location state (now includes deliveryPincode, not buyerDetails; cake preorder flow)
+  const { cartItems, deliveryPincode, deliveryCity, isCakePreorder, cakePreorderDetails } = location.state || {};
 
   // Helper function to clean display name (remove codes like "MCA2024-2026")
   const cleanDisplayName = (rawName) => {
@@ -57,7 +57,9 @@ export default function PaymentSelection() {
   });
 
   const [validationErrors, setValidationErrors] = useState({});
-  const [addressFormCompleted, setAddressFormCompleted] = useState(false);
+  const [addressFormCompleted, setAddressFormCompleted] = useState(
+    !!(location.state?.isCakePreorder && location.state?.buyerDetails?.address?.street)
+  );
   const [saveThisAddress, setSaveThisAddress] = useState(false);
   const [setAsDefault, setSetAsDefault] = useState(false);
   const [savedAddresses, setSavedAddresses] = useState([]);
@@ -138,23 +140,29 @@ export default function PaymentSelection() {
   }, []);
 
   useEffect(() => {
-    // Redirect if no cart items
+    // Redirect if no cart items (unless cake preorder with single item in state)
     if (!cartItems) {
-      toast.error("No order data found. Please start from checkout.");
-      navigate("/checkout");
+      toast.error("No order data found. Please start from cart or cake preorder.");
+      navigate(isCakePreorder ? "/cakes/preorder" : "/cart");
       return;
     }
 
-    // Initialize buyer details from auth
+    // Initialize buyer details from auth (only if not already set e.g. from cake address page)
     const user = auth.currentUser;
-    if (user) {
+    if (user && !location.state?.buyerDetails?.address?.street) {
       setBuyerDetails(prev => ({
         ...prev,
         name: cleanDisplayName(user.displayName) || "",
         email: user.email || "",
       }));
     }
-  }, [cartItems, navigate]);
+    if (location.state?.buyerDetails) {
+      setBuyerDetails(location.state.buyerDetails);
+      if (location.state.buyerDetails?.address?.street && isCakePreorder) {
+        setAddressFormCompleted(true);
+      }
+    }
+  }, [cartItems, navigate, isCakePreorder, location.state]);
 
   const calculateTotals = () => {
     const totalAmount = cartItems?.reduce((sum, item) => {
@@ -397,22 +405,28 @@ export default function PaymentSelection() {
         };
       });
 
-      const finalOrderData = {
+      const createPayload = {
         items: transformedItems,
         buyerDetails,
         paymentMethod,
         notes: "",
       };
+      if (isCakePreorder && cakePreorderDetails) {
+        createPayload.cakePreorderDetails = cakePreorderDetails;
+      }
 
-      console.log("Creating order:", finalOrderData);
+      console.log("Creating order:", createPayload);
 
-      const response = await fetch("http://localhost:5000/api/orders/create", {
+      const createUrl = isCakePreorder && cakePreorderDetails
+        ? "http://localhost:5000/api/orders/create-cake-preorder"
+        : "http://localhost:5000/api/orders/create";
+      const response = await fetch(createUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(finalOrderData),
+        body: JSON.stringify(createPayload),
       });
 
       if (!response.ok) {
@@ -1195,7 +1209,7 @@ export default function PaymentSelection() {
         {/* Action Buttons */}
         <div style={{ display: "flex", gap: "16px", marginTop: "24px" }}>
           <button
-            onClick={() => navigate("/checkout")}
+            onClick={() => navigate("/cart")}
             style={{
               flex: "0 0 auto",
               padding: "16px 32px",

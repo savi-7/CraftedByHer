@@ -129,6 +129,26 @@ router.post("/add", verify, async (req, res) => {
       return res.status(400).json({ error: "This product is currently out of stock" });
     }
     
+    // Check if product is buyable (not within 10 days of expiry)
+    if (product.expiryDate) {
+      const expiryDate = new Date(product.expiryDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Calculate cutoff date (10 days before expiry)
+      const cutoffDate = new Date(expiryDate);
+      cutoffDate.setDate(cutoffDate.getDate() - 10);
+      cutoffDate.setHours(0, 0, 0, 0);
+      
+      // Product is non-buyable if today is after the cutoff date
+      if (today > cutoffDate) {
+        console.log("❌ Product not buyable (within 10 days of expiry)");
+        return res.status(400).json({ 
+          error: "This product is not available for purchase as it is within 10 days of expiry" 
+        });
+      }
+    }
+    
     // Check if requested quantity exceeds available stock
     if (product.stock < quantity) {
       console.log("❌ Insufficient stock. Available:", product.stock, "Requested:", quantity);

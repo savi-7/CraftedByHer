@@ -31,6 +31,11 @@ export default function ProductCard({ p }) {
       return;
     }
 
+    if (p.isBuyable === false) {
+      toast.error("This product is not available for purchase as it is within 10 days of expiry");
+      return;
+    }
+
     try {
       const user = auth.currentUser;
       const token = await user.getIdToken();
@@ -60,7 +65,24 @@ export default function ProductCard({ p }) {
   };
 
   return (
-    <article className="cbh-card" onClick={handleCardClick} style={{ cursor: "pointer" }}>
+    <article className="cbh-card" onClick={handleCardClick} style={{ cursor: "pointer", position: "relative", opacity: p.isBuyable === false ? 0.7 : 1 }}>
+      {/* Non-buyable badge */}
+      {p.isBuyable === false && (
+        <div style={{
+          position: "absolute",
+          top: "8px",
+          right: "8px",
+          backgroundColor: "#ffc107",
+          color: "#856404",
+          padding: "4px 8px",
+          borderRadius: "4px",
+          fontSize: "10px",
+          fontWeight: "bold",
+          zIndex: 10
+        }}>
+          Not Available
+        </div>
+      )}
       <div
         className="cbh-card-img"
         style={{ backgroundImage: `url(${imageUrl})` }}
@@ -82,6 +104,13 @@ export default function ProductCard({ p }) {
               • {p.tag}
             </span>
           )}
+        </div>
+
+        {/* Category display */}
+        <div className="cbh-card-category" style={{ fontSize: "12px", color: "#666", marginBottom: "8px" }}>
+          {p.mainCategory && p.subCategory 
+            ? `${p.mainCategory} > ${p.subCategory}`
+            : p.subCategory || p.category?.name || p.category || "Uncategorized"}
         </div>
 
         {/* ✅ Variants with weight + price */}

@@ -17,7 +17,10 @@ import Account from "./pages/Account";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminHubManagement from "./pages/AdminHubManagement";
+import AdminApplications from "./pages/AdminApplications";
 import UserManagement from "./pages/UserManagement";
+import SellerDetails from "./pages/SellerDetails";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
@@ -30,22 +33,42 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import Orders from "./pages/Orders";
 import TrackOrder from "./pages/TrackOrder.jsx";
 import Mission from "./pages/Mission";
+import SellerRegistrationGuide from "./pages/SellerRegistrationGuide";
 import RequireAuth from "./routes/RequireAuth";
 import RequireUserAuth from "./routes/RequireUserAuth";
+import RequireSeller from "./routes/RequireSeller";
 import DeliveryLogin from "./pages/DeliveryLogin";
 import DeliveryDashboard from "./pages/DeliveryDashboard";
+import SellerDashboard from "./pages/SellerDashboard";
+import SellerApplication from "./pages/SellerApplication";
+import HubManagerLogin from "./pages/HubManagerLogin";
+import NewHubManagerDashboard from "./pages/NewHubManagerDashboard";
+import HubManagerRegistration from "./pages/HubManagerRegistration";
+import CentralHubManagerLogin from "./pages/CentralHubManagerLogin";
+import CentralHubManagerDashboard from "./pages/CentralHubManagerDashboard";
 import ErrorBoundary from "./components/ErrorBoundary";
+import ConnectionTest from "./pages/ConnectionTest";
+import ContentFeed from "./pages/ContentFeed";
+import ContentUpload from "./pages/ContentUpload";
+import ContentDetail from "./pages/ContentDetail";
+import UserProfile from "./pages/UserProfile";
+import HealthAssistantPage from "./pages/HealthAssistantPage";
+import OrderPlanner from "./pages/OrderPlanner";
+import HealthAssistant from "./components/HealthAssistant";
+import CakePreorder from "./pages/CakePreorder";
 
 export default function App() {
   const location = useLocation();
 
-  // ✅ Hide Navbar & Footer for admin pages and delivery pages
+  // ✅ Hide Navbar & Footer for admin pages, delivery pages, seller pages, and hub manager pages
   const isAdminPage = location.pathname.startsWith("/admin");
   const isDeliveryPage = location.pathname.startsWith("/delivery");
+  const isSellerPage = location.pathname.startsWith("/seller");
+  const isHubManagerPage = location.pathname.startsWith("/hub-manager") || location.pathname.startsWith("/central-hub-manager");
 
   return (
     <>
-      {!isAdminPage && !isDeliveryPage && <Navbar />}
+      {!isAdminPage && !isDeliveryPage && !isSellerPage && !isHubManagerPage && <Navbar />}
       <main className="min-h-[80vh] px-4">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -57,8 +80,10 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/mission" element={<Mission />} />
+          <Route path="/seller-guide" element={<SellerRegistrationGuide />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/cakes/preorder" element={<CakePreorder />} />
           <Route path="/cart" element={<CartPrompt />} />
           <Route path="/wishlist" element={<WishlistPrompt />} />
           <Route path="/cart/authenticated" element={<RequireUserAuth><Cart /></RequireUserAuth>} />
@@ -71,12 +96,30 @@ export default function App() {
           <Route path="/orders" element={<RequireUserAuth><Orders /></RequireUserAuth>} />
           <Route path="/track/:orderId" element={<ErrorBoundary><RequireUserAuth><TrackOrder /></RequireUserAuth></ErrorBoundary>} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/hub-management" element={<AdminHubManagement />} />
+          <Route path="/admin/applications" element={<AdminApplications />} />
           <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/admin/seller/:sellerId" element={<SellerDetails />} />
           <Route path="/delivery-login" element={<DeliveryLogin />} />
           <Route path="/delivery-dashboard" element={<DeliveryDashboard />} />
+          <Route path="/seller" element={<RequireSeller><SellerDashboard /></RequireSeller>} />
+          <Route path="/seller/application" element={<RequireSeller><SellerApplication /></RequireSeller>} />
+          <Route path="/hub-manager/login" element={<HubManagerLogin />} />
+          <Route path="/hub-manager/register" element={<HubManagerRegistration />} />
+          <Route path="/hub-manager/dashboard" element={<NewHubManagerDashboard />} />
+          <Route path="/central-hub-manager/login" element={<CentralHubManagerLogin />} />
+          <Route path="/central-hub-manager/dashboard" element={<CentralHubManagerDashboard />} />
+          <Route path="/connection-test" element={<ConnectionTest />} />
+          <Route path="/content" element={<RequireUserAuth><ContentFeed /></RequireUserAuth>} />
+          <Route path="/content/upload" element={<RequireUserAuth><ContentUpload /></RequireUserAuth>} />
+          <Route path="/content/:id" element={<RequireUserAuth><ContentDetail /></RequireUserAuth>} />
+          <Route path="/profile/:userId" element={<RequireUserAuth><UserProfile /></RequireUserAuth>} />
+          <Route path="/health-assistant" element={<HealthAssistantPage />} />
+          <Route path="/order-planner" element={<RequireUserAuth><OrderPlanner /></RequireUserAuth>} />
         </Routes>
       </main>
-      {!isAdminPage && !isDeliveryPage && <Footer />}
+      {!isAdminPage && !isDeliveryPage && !isSellerPage && !isHubManagerPage && <Footer />}
+      {!isAdminPage && !isDeliveryPage && !isSellerPage && !isHubManagerPage && <HealthAssistant />}
       <ToastContainer
         position="bottom-center"
         hideProgressBar
