@@ -3,6 +3,12 @@ const admin = require("../firebaseAdmin");
 // Authentication middleware for content and profile routes
 const auth = async (req, res, next) => {
   try {
+    if (!admin.apps?.length || admin.__isConfigured === false) {
+      return res.status(500).json({
+        message:
+          "Firebase Admin is not configured on the server. Set FIREBASE_SERVICE_ACCOUNT_JSON in Vercel env vars.",
+      });
+    }
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith("Bearer ")) {

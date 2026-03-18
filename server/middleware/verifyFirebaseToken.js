@@ -3,6 +3,13 @@ const admin = require("../firebaseAdmin");
 module.exports = async function verifyFirebaseToken(req, res, next) {
   try {
     console.log(`🔒 verifyFirebaseToken called for: ${req.method} ${req.url}`);
+    if (!admin.apps?.length || admin.__isConfigured === false) {
+      return res.status(500).json({
+        ok: false,
+        message:
+          "Firebase Admin is not configured on the server. Set FIREBASE_SERVICE_ACCOUNT_JSON in Vercel env vars.",
+      });
+    }
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       console.log(`❌ No token in request to ${req.url}`);
