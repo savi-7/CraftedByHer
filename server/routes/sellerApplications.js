@@ -3,14 +3,21 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const os = require("os");
 const verify = require("../middleware/verifyFirebaseToken");
 const verifyAdmin = require("../middleware/verifyAdmin");
 const User = require("../models/User");
 const SellerApplication = require("../models/SellerApplication");
 
+function getUploadsBaseDir() {
+  // Vercel/serverless: /var/task is read-only, but /tmp is writable.
+  if (process.env.VERCEL) return path.join(os.tmpdir(), "uploads");
+  return path.join(__dirname, "../../uploads");
+}
+
 // Ensure uploads directory exists
-const uploadsBaseDir = path.join(__dirname, "../../uploads");
-const sellerDocumentsDir = path.join(__dirname, "../../uploads/seller_documents");
+const uploadsBaseDir = getUploadsBaseDir();
+const sellerDocumentsDir = path.join(uploadsBaseDir, "seller_documents");
 
 if (!fs.existsSync(uploadsBaseDir)) {
   fs.mkdirSync(uploadsBaseDir, { recursive: true });
