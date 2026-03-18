@@ -44,9 +44,15 @@ class BaseTest:
         # Initialize wait
         self.wait = WebDriverWait(self.driver, Config.EXPLICIT_WAIT)
         
-        # Navigate to base URL
-        self.driver.get(Config.BASE_URL)
-        time.sleep(2)  # Wait for initial page load
+        # Navigate to base URL with error handling
+        try:
+            self.driver.get(Config.BASE_URL)
+            time.sleep(2)  # Wait for initial page load
+        except Exception as e:
+            # If connection refused, provide helpful error message
+            if "ERR_CONNECTION_REFUSED" in str(e) or "Connection refused" in str(e):
+                raise Exception(f"Cannot connect to {Config.BASE_URL}. Please ensure the application is running. Start it with: cd client && npm run dev")
+            raise
     
     def teardown_method(self):
         """Teardown method - runs after each test"""
